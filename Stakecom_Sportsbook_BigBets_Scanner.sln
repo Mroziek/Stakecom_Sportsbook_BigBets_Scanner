@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stakecom_Sportsbook_BigBets_Scanner", "Stakecom_Sportsbook_BigBets_Scanner\Stakecom_Sportsbook_BigBets_Scanner.csproj", "{E251A536-2610-45A7-AFE0-06080BC1C786}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E251A536-2610-45A7-AFE0-06080BC1C786}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E251A536-2610-45A7-AFE0-06080BC1C786}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E251A536-2610-45A7-AFE0-06080BC1C786}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E251A536-2610-45A7-AFE0-06080BC1C786}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8C1D9F5E-6A9B-47A6-BB2E-D09506312071}
+	EndGlobalSection
+EndGlobal
