@@ -12,4 +12,4 @@ Milestones:
 - Analyse the data to find best patterns
 - Create a live detector which will notificate about bet
 
-Next step: Make a loop which is going to look for new bets; and save everything in file
+Next step: Make a loop which is going to look for new bets; and save everything in a file
