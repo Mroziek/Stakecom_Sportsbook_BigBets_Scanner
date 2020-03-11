@@ -31,43 +31,40 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
 
             for (int i = 1; i < 10; i++) //10 last bets
             {
-                //Get single row - using loop iterator
-                var row = table.FindElement(By.XPath("//tr[" + i + "]"));
-
                 //Get bet direct link
-                string link = row.FindElement(By.XPath("//td[1]/a")).GetAttribute("href");
+                string link = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[1]/a")).GetAttribute("href");
 
                 //Get sport name
-                string sportName = row.FindElement(By.XPath("//td[1]")).Text;
+                string sportName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[1]")).Text;
 
                 //Get event name
-                string eventName = row.FindElement(By.XPath("//td[2]")).Text;
+                string eventName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[2]")).Text;
 
                 //Get username
-                string username = row.FindElement(By.XPath("//td[3]")).Text;
+                string username = chromeDriver.FindElement(By.XPath("//td[3]")).Text;
 
                 //Get odds (multiplayer)
-                string strOdds = row.FindElement(By.XPath("//td[5]")).Text;
+                string strOdds = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[5]")).Text;
                 double odds = double.Parse(strOdds.Replace("×", "")); //convert string to double
 
                 //Get Stake
-                string strStake = row.FindElement(By.XPath("//td[6]")).Text;
-                double stake = double.Parse(strStake.Replace('.',',')); //replace '.' to ',' to get correct format before parsing
+                string strStake = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[6]")).Text;
+                double stake = double.Parse(strStake.Replace('.', ',')); //replace '.' to ',' to get correct format before parsing
 
                 //Get Cryptocurrency name
-                var element = row.FindElement(By.XPath("//td[6]"));
+                var element = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[6]"));
                 element = element.FindElement(By.TagName("use"));
                 string cryptocurrency = element.GetAttribute("xlink:href").Substring(6);
 
                 bets.Add(new Bet(link, sportName, eventName, username, odds, stake, cryptocurrency));
             }
 
-            
+
             foreach (var bet in bets) //print all bets
             {
                 Console.WriteLine(bet.ToString());
-            }      
-            
+            }
+
 
             Console.ReadLine();
         }

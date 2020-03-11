@@ -29,7 +29,7 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
 
         public override string ToString()
         {
-            return directLink + "\n" + sport + "\n" + match + "\n" + username + "\n" + odds + "\n" + stake + "\n" + currency +"\n";
+            return directLink + "\n" + sport + "\n" + match + "\n" + username + "\n" + odds + "\n" + stake + " "+ currency +"\n";
         }
 
     }
