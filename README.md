@@ -16,9 +16,16 @@ Next step: Make a loop which is going to look for new bets; and save everything 
 
 
 Example Parse:
+
 sport: Ice Hockey
+
 matchname: PHI - BOS
+
 username: Hidden
+
 odds: 2,1
+
 stake: 0,12397704
+
 cryptocurrency: btc
+
