@@ -8,9 +8,9 @@ Suddenly, API is not ready yet, so I decided to write my own bet parser, which a
 My target is to collect data about all high stakes bet, and see if there is some pattern to find most valuable bets (maybe there is "big fish" with inside info?) and create some type of 'great bet' detector.
 
 Milestones:
-- (DONE) Create parser which allows to save information about bets to file/db
-- Analyse the data to find best patterns
-- Create a live detector which will notificate about bet
+- (DONE) Create parser which allows to save information about bets to JSON file
+
+- Create a live detector which will notificate about high stake bet
 
 Next step: Make a loop which is going to look for new bets; and save everything in a file
 
