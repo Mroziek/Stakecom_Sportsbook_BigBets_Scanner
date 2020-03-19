@@ -7,6 +7,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.Text.RegularExpressions;
 using System.Drawing;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Stakecom_Sportsbook_BigBets_Scanner
 {
@@ -15,58 +17,79 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
         static void Main(string[] args)
         {
             List<Bet> bets = new List<Bet>();
-
+            JsonSerializer serializer = new JsonSerializer();
             var url = "https://stake.com/sports";
-
             var chromeDriver = new ChromeDriver();
+
+            var urlUniqueList= new List<string>();
+
+            PrepareWebPageToRead(url, chromeDriver);
+
+            while (true)
+            {
+                try
+                {
+                    ReadAllBets(serializer, chromeDriver, ref urlUniqueList);
+                }
+                catch { }
+                System.Threading.Thread.Sleep(3 * 60 * 1000); //3 minutes check interval
+            }
+        }
+
+        private static void PrepareWebPageToRead(string url, ChromeDriver chromeDriver)
+        {
             chromeDriver.Manage().Window.Size = new Size(1920, 1080); //resize chrome window to fullsize page version
             chromeDriver.Navigate().GoToUrl(url);
+            System.Threading.Thread.Sleep(2000); //this page after loading have a next short reload after a while - this delay is to prevent reading data from unloaded page
+            chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/ul/li[3]/label/span[1]/select/option[3]")).Click(); //show last 50 bets (default is 10)
+            chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/ul/li[2]")).Click(); //select High Rollers card
+            System.Threading.Thread.Sleep(2000); //safe time to load table
+        }
 
-            //chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/ul/li[3]/label/span[1]/select/option[3]")).Click(); //show last 50 bets (default is 10)
-            chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/ul/li[2]")).Click(); //select High Rollers card
-            System.Threading.Thread.Sleep(1000); //this page after loading have a next short reload after a while - this delay is to prevent reading data from unloaded page
-
-            //Get table with last bets
-            var table = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody"));
-
-            for (int i = 1; i < 10; i++) //10 last bets
+        private static void ReadAllBets(JsonSerializer serializer, ChromeDriver chromeDriver, ref List<string> urlUniqueList)
+        {
+            for (int i = 1; i < 50; i++) //50 last bets
             {
                 //Get bet direct link
-                string link = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[1]/a")).GetAttribute("href");
+                string link = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[1]/a")).GetAttribute("href");
 
-                //Get sport name
-                string sportName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[1]")).Text;
+                if (!urlUniqueList.Contains(link)) //check if bet is in database already
+                {
+                    urlUniqueList.Add(link);
 
-                //Get event name
-                string eventName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[2]")).Text;
+                    //Get sport name
+                    string sportName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[1]")).Text;
 
-                //Get username
-                string username = chromeDriver.FindElement(By.XPath("//td[3]")).Text;
+                    //Get event name
+                    string eventName = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[2]")).Text;
 
-                //Get odds (multiplayer)
-                string strOdds = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[5]")).Text;
-                double odds = double.Parse(strOdds.Replace("×", "")); //convert string to double
+                    //Get username
+                    string username = chromeDriver.FindElement(By.XPath("//td[3]")).Text;
 
-                //Get Stake
-                string strStake = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[6]")).Text;
-                double stake = double.Parse(strStake.Replace('.', ',')); //replace '.' to ',' to get correct format before parsing
+                    //Get odds (multiplayer)
+                    string strOdds = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[5]")).Text;
+                    double odds = double.Parse(strOdds.Replace("×", "")); //convert string to double
 
-                //Get Cryptocurrency name
-                var element = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[3]/div/div/div/table/tbody/tr[" + i + "]/td[6]"));
-                element = element.FindElement(By.TagName("use"));
-                string cryptocurrency = element.GetAttribute("xlink:href").Substring(6);
+                    //Get Stake
+                    string strStake = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[6]")).Text;
+                    double stake = double.Parse(strStake.Replace('.', ',')); //replace '.' to ',' to get correct format before parsing
 
-                bets.Add(new Bet(link, sportName, eventName, username, odds, stake, cryptocurrency));
+                    //Get Cryptocurrency name
+                    var element = chromeDriver.FindElement(By.XPath("//*[@id='scrollable-main']/main/div/div/div[4]/div/div/div/table/tbody/tr[" + i + "]/td[6]"));
+                    element = element.FindElement(By.TagName("use"));
+                    string cryptocurrency = element.GetAttribute("xlink:href").Substring(6);
+
+                    Bet bet = new Bet(link, sportName, eventName, username, odds, stake, cryptocurrency);
+                    Console.WriteLine(bet.ToString());
+
+                    using (StreamWriter sw = new StreamWriter("bets.json", true)) //open json file
+                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(writer, bet); //add bet to json file
+                    }
+
+                }
             }
-
-
-            foreach (var bet in bets) //print all bets
-            {
-                Console.WriteLine(bet.ToString());
-            }
-
-
-            Console.ReadLine();
         }
     }
 }

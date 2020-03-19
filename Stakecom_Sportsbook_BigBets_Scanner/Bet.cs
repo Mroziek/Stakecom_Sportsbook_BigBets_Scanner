@@ -8,13 +8,13 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
 {
     public class Bet
     {
-        string directLink;
-        string sport;
-        string match;
-        string username;
-        double odds;
-        double stake;
-        string currency;
+        public string directLink;
+        public string sport;
+        public string match;
+        public string username;
+        public double odds;
+        public double stake;
+        public string currency;
 
         public Bet(string directLink, string sport, string match, string username, double odds, double stake, string currency)
         {
