@@ -12,7 +12,6 @@ Milestones:
 
 - Create a live detector which will notificate about high stake bet
 
-Next step: Make a loop which is going to look for new bets; and save everything in a file
 
 
 Example Parse:
