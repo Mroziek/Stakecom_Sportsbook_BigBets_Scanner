@@ -15,7 +15,8 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
     class Program
     {
         static void Main(string[] args)
-        {
+        {       
+           
             List<Bet> bets = new List<Bet>();
             JsonSerializer serializer = new JsonSerializer();
             var url = "https://stake.com/sports";
@@ -80,7 +81,12 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
                     string cryptocurrency = element.GetAttribute("xlink:href").Substring(6);
 
                     Bet bet = new Bet(link, sportName, eventName, username, odds, stake, cryptocurrency);
-                    Console.WriteLine(bet.ToString());
+
+                    if (ConvertToUSD(stake, cryptocurrency) > 1000 && odds > 1.50)
+                    {
+                        Console.WriteLine("!!! HIGH STAKE BET - " + ConvertToUSD(stake, cryptocurrency) + "$ !!!");
+                        Console.WriteLine(bet.ToString());
+                    }
 
                     using (StreamWriter sw = new StreamWriter("bets.json", true)) //open json file
                     using (JsonWriter writer = new JsonTextWriter(sw))
@@ -91,5 +97,26 @@ namespace Stakecom_Sportsbook_BigBets_Scanner
                 }
             }
         }
+
+        private static double ConvertToUSD(double value, string cryptocurrency)
+        {
+            int eth = 130;
+            int btc = 6200;
+            int ltc = 40;
+
+            int usd;
+
+            switch (cryptocurrency)
+            {
+                case "eth":
+                    return Math.Round(eth* value,0);
+                case "btc":
+                    return Math.Round(btc * value, 0);
+                case "ltc":
+                    return Math.Round(ltc * value, 0);
+                default:
+                    return 1;
+            }
+        } 
     }
 }
